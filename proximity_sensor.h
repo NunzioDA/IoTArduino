@@ -4,11 +4,18 @@
 #include <Arduino.h>
 
 /**
- * @brief ProximitySensor is a class for measuring distance 
- * using an ultrasonic sensor.
- *
- * This class allows measuring distances using the HC-SR04 sensor 
- * with a trigger and echo pin.
+  * @brief ProximitySensor is a class for measuring distance 
+  * using an ultrasonic sensor.
+  *
+  * This class allows measuring distances using the HC-SR04 sensor 
+  * with a trigger and echo pin.
+  *
+  * ## Usage:
+  * ```cpp
+  * ProximitySensor sensor(7, 6); // Define a sensor with custom thresholds
+  * Serial.print("Distance: ");
+  * Serial.println(sensor.distance());
+  * ```
  */
 class ProximitySensor
 {
