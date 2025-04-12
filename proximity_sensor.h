@@ -4,6 +4,9 @@
 #include <Arduino.h>
 
 /**
+  * Author: Nunzio D'Amore.
+  * Date: 03/04/2025
+  *
   * @brief ProximitySensor is a class for measuring distance 
   * using an ultrasonic sensor.
   *
