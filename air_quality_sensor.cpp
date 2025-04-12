@@ -22,7 +22,9 @@
 #include "air_quality_sensor.h"
 #include "Arduino.h"
 
-AirQualitySensor::AirQualitySensor(int pin) : pin(pin), badAirThreshold(100), goodAirThreshold(50){}
+AirQualitySensor::AirQualitySensor(int pin) : pin(pin), badAirThreshold(100), goodAirThreshold(50){
+  pinMode(this-> pin, INPUT);
+}
 AirQualitySensor::AirQualitySensor(int pin, int badAirThreshold, int goodAirThreshold) : pin(pin), badAirThreshold(badAirThreshold), goodAirThreshold(goodAirThreshold){}
 
 bool AirQualitySensor::badQuality(){

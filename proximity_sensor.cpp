@@ -1,5 +1,8 @@
 
 /**
+  * Author: Nunzio D'Amore.
+  * Date: 03/04/2025
+  *
   * @brief ProximitySensor is a class for measuring distance 
   * using an ultrasonic sensor.
   *
@@ -33,8 +36,7 @@ float ProximitySensor::distance()
   delayMicroseconds(10);
   digitalWrite(this -> trigger, LOW);
 
-  float duration = pulseIn(this -> echo, HIGH);
-
+  float duration = pulseIn(this -> echo, HIGH, 100000);
   float distance = (duration*.0343)/2;
   return distance;
 }

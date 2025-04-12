@@ -20,7 +20,9 @@
 #define LIGHT 600
 #define BRIGHT 920
 
-LightSensor::LightSensor(int pin) : pin(pin){}
+LightSensor::LightSensor(int pin) : pin(pin){
+  pinMode(this-> pin, INPUT);
+}
 
 bool LightSensor::isDark()
 {
