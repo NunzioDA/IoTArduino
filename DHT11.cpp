@@ -11,7 +11,9 @@
 #include "Arduino.h"
 
 
-DHT11::DHT11(int pin) : pin(pin), DHT(){}
+DHT11::DHT11(int pin) : pin(pin), DHT(){
+  pinMode(this-> pin, INPUT);
+}
 
 void DHT11::read()
 {
