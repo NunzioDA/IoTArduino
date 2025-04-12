@@ -1,5 +1,5 @@
-#ifndef Allarm_h
-#define Allarm_h
+#ifndef Alarm_h
+#define Alarm_h
 
 #include <Arduino.h>
 
@@ -7,19 +7,20 @@
 * Author: Nunzio D'Amore.
 * Date: 03/04/2025
 *
-* The Allarm class allows playing an alarm melody using a buzzer 
+* The Alarm class allows playing an alarm melody using a buzzer and 
 * while ensuring non-blocking execution by utilizing the millis() function.
 * This approach prevents delays that could interfere with other tasks 
 * running on the microcontroller.
 */
-class Allarm
+class Alarm
 {
   public:
     /**
-     * @brief Constructor: Initializes the Allarm object.
-     * @param pin The digital pin connected to the buzzer.
+     * @brief Constructor: Initializes the Alarm object.
+     * @param buzzerPin The digital pin connected to the buzzer.
+     * @param ledPin The digital pin connected to the led.
      */
-    Allarm(int pin);
+    Alarm(int buzzerPin, int ledPin);
 
     /**
      * @brief Starts playing the alarm melody.
@@ -31,7 +32,11 @@ class Allarm
     /**
      * @brief Stores the digital pin connected to the buzzer.
      */
-    int pin;
+    int buzzerPin;
+    /**
+     * @brief Stores the digital pin connected to the led.
+     */
+    int ledPin;
 
     /**
      * @brief Constant defining the number of notes in the melody.
@@ -48,6 +53,11 @@ class Allarm
      * @brief Keeps track of the current note being played in the melody array.
      */
     int melodyIndex;
+
+    /**
+     * @brief Keeps track of the current ledStatus.
+     */
+    bool ledStatus;
 
     /**
      * @brief Boolean flag indicating whether the alarm melody is currently playing.
