@@ -31,7 +31,7 @@ ProximitySensor::ProximitySensor(int trigger, int echo) : trigger(trigger), echo
 float ProximitySensor::distance()
 {
   digitalWrite(this -> trigger, LOW);
-  delayMicroseconds(2);
+  delayMicroseconds(5);
   digitalWrite(this -> trigger, HIGH);
   delayMicroseconds(10);
   digitalWrite(this -> trigger, LOW);

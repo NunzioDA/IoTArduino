@@ -9,8 +9,10 @@ class ParkSensor
   public:
     ParkSensor(int trigger, int echo);
     bool isParked();
+    double distance();
   private:
     ProximitySensor proximitySensor;
+    double distance_noise_reduction;
 };
 
 #endif

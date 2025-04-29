@@ -23,7 +23,7 @@
 #include "flame_sensor.h"
 #include "Arduino.h"
 
-FlameSensor::FlameSensor(int pin) : pin(pin), threshold(30){
+FlameSensor::FlameSensor(int pin) : pin(pin), threshold(100){
   pinMode(this-> pin, INPUT);
 }
 FlameSensor::FlameSensor(int pin, int threshold) : pin(pin), threshold(threshold){}

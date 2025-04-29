@@ -21,15 +21,21 @@ Alarm::Alarm(int buzzerPin, int ledPin) : buzzerPin(buzzerPin), ledPin(ledPin), 
   pinMode(ledPin, OUTPUT);
 }
 
+void Alarm::stop()
+{
+  this -> playing = false;
+  this -> melodyIndex = 0;
+  this -> startMillis = millis();
+  digitalWrite(this -> ledPin, LOW);
+}
+
 void Alarm::play()
 {
   // If the RESET_TIME is elapsed reset
   // all parameters
   if(this -> elapsed() > RESET_TIME)
   {
-    this -> playing = false;
-    this -> melodyIndex = 0;
-    this -> startMillis = millis();
+    this -> stop();
   }
   else{
     // If not playing play the current note

@@ -33,7 +33,7 @@ class RGBDimmableLight{
   RGBDimmableLight(int r_pin, int g_pin, int b_pin);
 
   /**
-   * @brief Sets the color of the RGB LED based on a color name.
+   * @brief Sets the color of the RGB LED based on a color hex.
    *
    * This method takes a string representing the desired color and sets the
    * appropriate intensity levels for the red, green, and blue LED components.
@@ -41,6 +41,13 @@ class RGBDimmableLight{
    * @param hexColor A string representing the desired color in hexadecimal.
   */
   void setColor(String hexColor);
+
+  /**
+   * @brief Sets the color of the RGB LED based on a color name.
+   *
+   * This method takes the r, g, b intensities to set the led color.
+  */
+  void setColor(int red, int green, int blue);
 
   /**
    * @brief Switches the light on
@@ -57,6 +64,11 @@ class RGBDimmableLight{
    *
   */
   void off();
+  /**
+   * @brief Used to get the current light color
+   *
+  */
+  void getColor(int color[3]);
 
  private:
   int r_pin; // pin connected to the red LED component.

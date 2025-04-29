@@ -19,6 +19,11 @@ void RGBDimmableLight::setColor(String hexColor)
   byte green = (number >> 8) & 0xFF;
   byte blue  = number & 0xFF;
 
+  this -> setColor(red, green, blue);
+}
+
+void RGBDimmableLight::setColor(int red, int green, int blue)
+{
   Serial.println(red);
   Serial.println(green);
   Serial.println(blue);
@@ -49,3 +54,10 @@ void RGBDimmableLight::off()
   analogWrite(this -> g_pin, 0);
   analogWrite(this -> b_pin, 0);
 }
+
+void RGBDimmableLight::getColor(int outColor[3]) {
+    outColor[0] = this->r_intensity;
+    outColor[1] = this->g_intensity;
+    outColor[2] = this->b_intensity;
+}
+

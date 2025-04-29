@@ -27,6 +27,11 @@ class Alarm
      */
     void play();
 
+    /**
+     * @brief Stops playing the alarm melody.
+     */
+    void stop();
+
 
   private:
     /**
