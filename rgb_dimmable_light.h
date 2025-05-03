@@ -69,6 +69,10 @@ class RGBDimmableLight{
    *
   */
   void getColor(int color[3]);
+  /**
+  * @brief Used to check if the light is on
+  */
+  bool isOn();
 
  private:
   int r_pin; // pin connected to the red LED component.
@@ -77,6 +81,7 @@ class RGBDimmableLight{
   int r_intensity; // intensity of the red LED component.
   int g_intensity; // intensity of the blue LED component.
   int b_intensity; // intensity of the green LED component.
+  bool status; // Current light status
 };
 
 #endif

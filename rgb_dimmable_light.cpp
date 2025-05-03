@@ -1,10 +1,13 @@
 #include "rgb_dimmable_light.h"
 #include "Arduino.h"
 
-RGBDimmableLight::RGBDimmableLight(int r_pin, int g_pin, int b_pin) : r_pin(r_pin), g_pin(g_pin), b_pin(b_pin), r_intensity(255), g_intensity(255), b_intensity(255) {
+RGBDimmableLight::RGBDimmableLight(int r_pin, int g_pin, int b_pin) : r_pin(r_pin), g_pin(g_pin), b_pin(b_pin), r_intensity(255), g_intensity(255), b_intensity(255), status(false) {
   pinMode(this-> r_pin, OUTPUT);
   pinMode(this-> g_pin, OUTPUT);
   pinMode(this-> b_pin, OUTPUT);
+  digitalWrite(this-> r_pin, LOW);
+  digitalWrite(this-> g_pin, LOW);
+  digitalWrite(this-> b_pin, LOW); 
 }
 
 void RGBDimmableLight::setColor(String hexColor)
@@ -36,13 +39,16 @@ void RGBDimmableLight::setColor(int red, int green, int blue)
   this -> g_intensity = green_intensity;
   this -> b_intensity = blue_intensity;
 
-  analogWrite(this -> r_pin, red_intensity);
-  analogWrite(this -> g_pin, green_intensity);
-  analogWrite(this -> b_pin, blue_intensity);
+  if (this-> isOn()){
+    analogWrite(this -> r_pin, red_intensity);
+    analogWrite(this -> g_pin, green_intensity);
+    analogWrite(this -> b_pin, blue_intensity);
+  }
 }
 
 void RGBDimmableLight::on()
 {
+  this -> status = true;
   analogWrite(this -> r_pin, this -> r_intensity);
   analogWrite(this -> g_pin, this -> g_intensity);
   analogWrite(this -> b_pin, this -> b_intensity);
@@ -50,6 +56,7 @@ void RGBDimmableLight::on()
 
 void RGBDimmableLight::off()
 {
+  this -> status = false;
   analogWrite(this -> r_pin, 0);
   analogWrite(this -> g_pin, 0);
   analogWrite(this -> b_pin, 0);
@@ -61,3 +68,7 @@ void RGBDimmableLight::getColor(int outColor[3]) {
     outColor[2] = this->b_intensity;
 }
 
+bool RGBDimmableLight::isOn()
+{
+  return status;
+}
