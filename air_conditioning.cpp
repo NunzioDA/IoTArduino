@@ -2,7 +2,7 @@
 #include "Arduino.h"
 
 
-AirConditioning::AirConditioning(int cool_pin, int warm_pin) : cool_pin(cool_pin), warm_pin(warm_pin), autoMode(true){
+AirConditioning::AirConditioning(int cool_pin, int warm_pin) : cool_pin(cool_pin), warm_pin(warm_pin), autoMode(true), targetTemperature(20){
   pinMode(this-> cool_pin, OUTPUT);
   pinMode(this-> warm_pin, OUTPUT);
 }
