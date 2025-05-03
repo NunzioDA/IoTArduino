@@ -20,7 +20,7 @@
 #define LIGHT 600
 #define BRIGHT 920
 
-LightSensor::LightSensor(int pin) : pin(pin){
+LightSensor::LightSensor(int pin) : pin(pin), currentStatus(0){
   pinMode(this-> pin, INPUT);
 }
 
@@ -51,5 +51,10 @@ bool LightSensor::isVeryBright()
 
 int LightSensor::status()
 { 
-  return analogRead(this -> pin);
+  long temp = (long) this -> currentStatus; 
+  long read = (long) analogRead(this -> pin);
+  temp = ((100 * temp) + read)/101;
+  this -> currentStatus = temp;
+
+  return this -> currentStatus;
 }

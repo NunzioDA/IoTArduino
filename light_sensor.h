@@ -82,6 +82,10 @@ class LightSensor
      * @brief Stores the analog pin connected to the light sensor.
      */
     int pin;
+    /**
+     * @brief Stores the current status of the light sensor.
+     */
+    int currentStatus;
 };
 
 #endif
