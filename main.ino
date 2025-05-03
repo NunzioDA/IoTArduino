@@ -7,14 +7,19 @@
 #include "rgb_dimmable_light.h"
 #include "DHT11.h"
 #include "string_utils.h"
+#include "fire_extinguisher.h"
+#include "air_conditioning.h"
 
+
+// Initializing all the sensors
 Alarm alarm(13, 12);
+FireExtinguisher fireExtinguisher(24);
 LightSensor lightSensor(A0);
 FlameSensor flameSensor(A13);
 AirQualitySensor airQualitySensor(A9);
 
 DHT11 DHT(10);
-unsigned long millisLastDHTRead = 0;
+unsigned long millisLastDHTRead = -6000;
 
 ParkSensor parkA(50,52);
 ParkSensor parkB(51,53);
@@ -29,11 +34,19 @@ bool playAlarm = false;
 unsigned long millisLastFlameDetected = 0;
 
 
+AirConditioning airConditioner(30, 31);
+int currentTemperature = 20;
+int currentHumidity = 30;
+
 void setup()
 {
+  // Initializing Serial
   Serial.begin(9600);
 }
 
+// This function is used to handle available
+// messages from the serial port.
+// This is where all the commands are executed
 void handleMessages()
 {
   if (Serial.available()) {
@@ -80,18 +93,35 @@ void handleMessages()
 
       Serial.println(parts[0]+";"+returnValue);
     }
+    else if (parts[1]=="air"){
+      if(parts[2]=="temperature")
+      {
+        airConditioner.setTargetTemperature(parts[3].toInt());
+        Serial.println(parts[0]+";"+returnValue);
+      }
+      else if(parts[2]=="off")
+      {
+        airConditioner.stop();
+      }
+      else if(parts[2]=="cool")
+      {
+        airConditioner.cool();
+      }
+      else if(parts[2]=="warm")
+      {
+        airConditioner.warm();
+      }
+    }
     else if(parts[1]=="info")
     {
-      if (millis() - millisLastDHTRead > 5000)
-      {
-        millisLastDHTRead = millis();
-        DHT.read();
-      }
-
+      // Returning info as a json string
       String jsonInfo = "{";
-      jsonInfo += "\"temperature\":" + String(DHT.temperature()) + ",";
-      jsonInfo += "\"humidity\":" + String(DHT.temperature()) + ",";
+      jsonInfo += "\"temperature\":" + String(currentTemperature) + ",";
+      jsonInfo += "\"target_temperature\":" + String(airConditioner.getTargetTemperature()) + ",";
+      jsonInfo += "\"humidity\":" + String(currentHumidity) + ",";
+      jsonInfo += "\"air\":" + String(airQualitySensor.airQuality()) + ",";
       jsonInfo += "\"light\":" + String(lightSensor.status()) + ",";
+      jsonInfo += "\"light_status\":" + String(lighting.isOn()) + ",";
       int color [3];
       lighting.getColor(color);
       jsonInfo += "\"light_color\":[" + String(color[0]) + "," + String(color[1]) + "," + String(color[2]) + "],";
@@ -114,19 +144,39 @@ void handleMessages()
 
 void loop()
 {
+  //Serial.println(String(parkA.distance())+ " "  + String(parkB.distance()) + " " + String(parkC.distance()));
+  //Serial.println(lightSensor.status());
   handleMessages();
 
-  if(autoLight){    
-    if(lightSensor.status() < 300)
-    {
-      //Serial.println("IS DARK");
-      lighting.on();
-    }
-    else if(lightSensor.status() > 350){
-      lighting.off();
-    }
+  // Waiting longer when the allarm is playing to 
+  // allow the alarm to play longer without delay
+  if ((playAlarm && millis() - millisLastDHTRead > 10000) || (!playAlarm && millis() - millisLastDHTRead > 5000))
+  {
+    millisLastDHTRead = millis();
+    DHT.read();
+    currentTemperature = DHT.temperature();
+    currentHumidity = DHT.humidity();
   }
 
+  airConditioner.checkTemperature(currentTemperature);
+
+  if(autoLight){ 
+
+    if(lightSensor.status() < 450 && !lighting.isOn())
+    {
+      lighting.on();
+    }
+    else if(lighting.isOn()){ 
+      int color [3];
+      lighting.getColor(color);
+      // Computing threshold based on current color
+      int top_threshold = 500 + ((double)(color[0] + color[1] + color[2])/765.0) * 250;
+      if(lightSensor.status() > top_threshold){
+      
+        lighting.off();
+      }
+    }
+  }
 
   if(flameSensor.flameDetected())
   {
@@ -140,15 +190,18 @@ void loop()
   if(playAlarm)
   {
     alarm.play();
+    fanSystem.off();
+    fireExtinguisher.start();
   }
   else{
     alarm.stop();
-
-    if(airQualitySensor.airQuality() > 35)
+    fireExtinguisher.stop();
+    if(airQualitySensor.airQuality() > 50)
     {
-      double intensity = airQualitySensor.airQuality() / 85;
+      double intensity = airQualitySensor.airQuality() / 70;
       if(intensity > 1) intensity = 1;
       fanSystem.blow(intensity);
+      //Serial.println(intensity);
     }
     else{
       fanSystem.off();
