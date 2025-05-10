@@ -38,10 +38,20 @@ AirConditioning airConditioner(30, 31);
 int currentTemperature = 20;
 int currentHumidity = 30;
 
+int analogReadOffset = 0;
+
 void setup()
 {
   // Initializing Serial
   Serial.begin(9600);
+}
+
+float airQuality(){
+  return airQualitySensor.airQuality() - analogReadOffset;
+}
+
+int lightStatus(){
+  return lightSensor.status() - analogReadOffset;
 }
 
 // This function is used to handle available
@@ -119,8 +129,8 @@ void handleMessages()
       jsonInfo += "\"temperature\":" + String(currentTemperature) + ",";
       jsonInfo += "\"target_temperature\":" + String(airConditioner.getTargetTemperature()) + ",";
       jsonInfo += "\"humidity\":" + String(currentHumidity) + ",";
-      jsonInfo += "\"air\":" + String(airQualitySensor.airQuality()) + ",";
-      jsonInfo += "\"light\":" + String(lightSensor.status()) + ",";
+      jsonInfo += "\"air\":" + String(airQuality()) + ",";
+      jsonInfo += "\"light\":" + String(lightStatus()) + ",";
       jsonInfo += "\"light_status\":" + String(lighting.isOn()) + ",";
       int color [3];
       lighting.getColor(color);
@@ -142,8 +152,19 @@ void handleMessages()
   }
 }
 
+
+
 void loop()
 {
+  if(lighting.isOn())
+  {
+    int color [3];
+    lighting.getColor(color);
+    analogReadOffset = (((float)(color[0] + color[1] + color[2]))/(3*255))*17; 
+  }
+  else{
+    analogReadOffset = 0;
+  }
   //Serial.println(String(parkA.distance())+ " "  + String(parkB.distance()) + " " + String(parkC.distance()));
   //Serial.println(lightSensor.status());
   handleMessages();
@@ -162,7 +183,7 @@ void loop()
 
   if(autoLight){ 
 
-    if(lightSensor.status() < 450 && !lighting.isOn())
+    if(lightStatus() < 450 && !lighting.isOn())
     {
       lighting.on();
     }
@@ -171,7 +192,7 @@ void loop()
       lighting.getColor(color);
       // Computing threshold based on current color
       int top_threshold = 500 + ((double)(color[0] + color[1] + color[2])/765.0) * 250;
-      if(lightSensor.status() > top_threshold){
+      if(lightStatus() > top_threshold){
       
         lighting.off();
       }
@@ -196,9 +217,10 @@ void loop()
   else{
     alarm.stop();
     fireExtinguisher.stop();
-    if(airQualitySensor.airQuality() > 50)
+    
+    if(airQuality() > 70)
     {
-      double intensity = airQualitySensor.airQuality() / 70;
+      double intensity = airQuality() / 100;
       if(intensity > 1) intensity = 1;
       fanSystem.blow(intensity);
       //Serial.println(intensity);
