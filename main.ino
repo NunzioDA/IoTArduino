@@ -152,53 +152,25 @@ void handleMessages()
   }
 }
 
-
-
-void loop()
-{
-  if(lighting.isOn())
-  {
-    int color [3];
-    lighting.getColor(color);
-    analogReadOffset = (((float)(color[0] + color[1] + color[2]))/(3*255))*17; 
-  }
-  else{
-    analogReadOffset = 0;
-  }
-  //Serial.println(String(parkA.distance())+ " "  + String(parkB.distance()) + " " + String(parkC.distance()));
-  //Serial.println(lightSensor.status());
-  handleMessages();
-
-  // Waiting longer when the allarm is playing to 
-  // allow the alarm to play longer without delay
-  if ((playAlarm && millis() - millisLastDHTRead > 10000) || (!playAlarm && millis() - millisLastDHTRead > 5000))
-  {
-    millisLastDHTRead = millis();
-    DHT.read();
-    currentTemperature = DHT.temperature();
-    currentHumidity = DHT.humidity();
-  }
-
-  airConditioner.checkTemperature(currentTemperature);
-
+void manageLighting(){
   if(autoLight){ 
 
-    if(lightStatus() < 450 && !lighting.isOn())
+    if(lightStatus() < 400 && !lighting.isOn())
     {
       lighting.on();
     }
     else if(lighting.isOn()){ 
-      int color [3];
-      lighting.getColor(color);
       // Computing threshold based on current color
-      int top_threshold = 500 + ((double)(color[0] + color[1] + color[2])/765.0) * 250;
+      int top_threshold = 450 + lighting.intensity() * 200;
       if(lightStatus() > top_threshold){
       
         lighting.off();
       }
     }
   }
+}
 
+void securitySystemCheck(){
   if(flameSensor.flameDetected())
   {
     playAlarm = true;
@@ -229,5 +201,45 @@ void loop()
       fanSystem.off();
     }
   }
+}
 
+void readTemperature()
+{
+  // Waiting longer when the allarm is playing to 
+  // allow the alarm to play longer without delay
+  if ((playAlarm && millis() - millisLastDHTRead > 10000) || (!playAlarm && millis() - millisLastDHTRead > 5000))
+  {
+    millisLastDHTRead = millis();
+    DHT.read();
+    currentTemperature = DHT.temperature();
+    currentHumidity = DHT.humidity();
+  }
+
+}
+
+// Analog offset used to correct analog read errors
+// caused by high current draw from lighting devices,
+// which are directly powered by the Arduino.
+void updateAnalogOffset()
+{
+  if(lighting.isOn())
+  {
+    analogReadOffset = lighting.intensity() * 17; 
+  }
+  else{
+    analogReadOffset = 0;
+  }
+}
+
+void loop()
+{
+  //Serial.println(String(parkA.distance())+ " "  + String(parkB.distance()) + " " + String(parkC.distance()));
+  //Serial.println(lightSensor.status());
+  updateAnalogOffset();
+  readTemperature();
+  handleMessages();
+
+  airConditioner.checkTemperature(currentTemperature);
+  manageLighting();
+  securitySystemCheck();
 }

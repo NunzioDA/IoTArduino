@@ -74,6 +74,16 @@ class RGBDimmableLight{
   */
   bool isOn();
 
+  /**
+  * @brief Returns the current light intensity as a float value.
+  * 
+  * This method returns a value between 0.0 and 1.0, representing 
+  * the fraction of maximum brightness currently emitted by the RGB light.
+  * 
+  * @return float Intensity level in the range [0.0, 1.0].
+  */
+  float intensity();
+
  private:
   int r_pin; // pin connected to the red LED component.
   int g_pin; // pin connected to the green LED component.

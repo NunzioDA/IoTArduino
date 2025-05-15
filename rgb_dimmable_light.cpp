@@ -68,6 +68,17 @@ void RGBDimmableLight::getColor(int outColor[3]) {
     outColor[2] = this->b_intensity;
 }
 
+float RGBDimmableLight::intensity(){
+  if(this -> isOn()){
+    int color [3];
+    this -> getColor(color);
+    return (((float)(color[0] + color[1] + color[2]))/(3*255)); 
+  }
+  else{
+    return 0;
+  }
+}
+
 bool RGBDimmableLight::isOn()
 {
   return status;
