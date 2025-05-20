@@ -20,7 +20,7 @@
 #define LIGHT 600
 #define BRIGHT 920
 
-LightSensor::LightSensor(int pin) : pin(pin), currentStatus(0){
+LightSensor::LightSensor(int pin) : pin(pin), currentStatus(500){
   pinMode(this-> pin, INPUT);
 }
 
