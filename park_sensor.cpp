@@ -6,7 +6,7 @@ ParkSensor::ParkSensor(int trigger, int echo) : proximitySensor(trigger, echo), 
 
 bool ParkSensor::isParked()
 {
-  bool returnValue = this -> distance() < 9;
+  bool returnValue = this -> distance() < 9 | this -> distance() > 15;
   return returnValue;
 }
 
